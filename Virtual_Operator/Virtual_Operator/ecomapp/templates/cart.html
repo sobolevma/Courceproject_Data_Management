@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content%}
+
+
+{% if cart.items.count > 0 %}
+    <div class="my-cart">
+        <h3 class="text-center" style="color:orangered"><strong>Ваша корзина</strong></h3>
+    <br>
+
+    <table class="table table-bordered table-info">
+
+        <tr style="color:olive; background: #FFDAB9">
+            <th class="text-center"> <strong>Товар</strong> </th>
+            <th class="text-center"> <strong>Номер телефона</strong> </th>
+            <th class="text-center"> <strong>Выбор телефона</strong> </th>
+            <th class="text-center"> <strong>Цена</strong></th>
+            <th class="text-center"> <strong>Поставщик</strong></th>
+            <th class="text-center"> </th>
+        </tr>
+
+        {% for item in cart.items.all %}
+            <tr style="color: DarkGreen">
+                <td class="text-center"> <div style="font-size:20px ">{{ item.service.title }}</div> </td>
+
+                <td class="text-center"> <div style="font-size:20px "  id ="cart-phone-add-{{ item.id }}">{{ item.phone }}</div></td>
+                <td class="text-center">
+
+                    <div class="form-group" >
+
+
+                        <label for="formControlSelect" hidden></label>
+                        <select class="form-control" id="formControlSelect" my-item="{{ item.id }}">
+                            {% for phone in phones %}
+                                <option>
+                                        {{ phone.phone_number }}
+                                </option>
+
+                             {% endfor %}
+
+                        </select>
+                    </div>
+                </td>
+
+                <td class="text-center"> <div style="font-size:20px "> {{ item.item_total }} руб.</div></td>
+                <td class="text-center"> <div style="font-size:20px "> {{ item.service.brand }}</div></td>
+                <td class="text-center"> <a href="#" class="remove_from_cart" data-slug="{{ item.service.slug }}"
+                                            data-id="{{ item.service.id }}"> <button class="btn btn-danger">
+                                             Удалить из корзины</button></a></td>
+            </tr>
+        {% endfor %}
+
+        <tr style="color:olive">
+            <td></td>
+            <td></td>
+            <td class="text-center"><div style="font-size:20px "><strong>Итого:</strong></div></td>
+            <td class="text-center"><div style="font-size:20px " id="cart-total-price"><span style="color: red; "><strong>
+                {{cart.cart_total }} руб.</strong></span></div></td>
+            <td></td>
+        </tr>
+    </table>
+    <br>
+        <div style="text-align: right"><a href="{% url "checkout" %}"><button class ="btn btn-info">Предварительный заказ</button>
+        </a></div>
+    </div>
+    <h3 class="cart-empty"></h3>
+    {% else %}
+    <h3 class ="text-center">Ваша корзина пуста</h3>
+    <br><br><br>
+{% endif %}
+
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js'%}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.cart-empty').css('dispalay', 'none');
+
+            $('.remove_from_cart').on('click', function(e) {
+                e.preventDefault();
+                service_slug = $(this).attr('data-slug');
+                item_service_id = $(this).attr('data-id');
+
+                data = {
+                   service_slug: service_slug
+                };
+
+                $.ajax({
+                    type:"GET",
+                    url:'{% url "remove_from_cart" %}',
+                    data: data,
+                    success: function (data) {
+                           $("#cart_count").html(data.cart_total);
+                           $('.cart-item-'+item_service_id).css('display', 'none');
+                           $('#cart-total-price').html('<strong>'+parseFloat(data.cart_total_price).toFixed(2)+'руб. ' +
+                               '</strong>');
+
+                            if(parseInt(data.cart_total) === 0)
+                            {
+                                new_select = '.cart-empty';
+                                $('.my-cart').css('display', 'none');
+                                $(new_select).css('display', 'block');
+                                $(new_select).html('<h3 class ="text-center">Ваша корзина пуста</h3>')
+                            }
+                    }
+                })
+
+            })
+        })
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            $('.form-control').on('change', function() {
+
+                my_selector = ".form-control option:selected";
+
+                phone_number = $(my_selector).val();
+                item_id = $(this).attr('my-item');
+                console.log(item_id);
+                console.log(phone_number);
+
+                data = {
+                    phone_number: phone_number,
+                    item_id: item_id
+                };
+
+                $.ajax({
+                    type:"GET",
+                    url: '{% url "add_phone_to_cart" %}',
+                    data: data,
+                    success: function (data) {
+                      $('#cart-phone-add-'+item_id).html(data.phone_number)
+                    }
+                })
+            })
+        })
+    </script>
+
+    <script>
+        function showForm() {
+
+            document.getElementById("select1").hidden = true;
+        }
+    </script>
+
+
+{% endblock content%}

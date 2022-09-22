@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+<style>
+    .modal-body{
+        background-color: #F3E2A9 !important;
+        border-color: cadetblue;
+        }
+</style>
+
+{% block content%}
+    <h3 class="text-center" style="color:orangered">Личный кабинет пользователя</h3>
+    <br>
+    <h4 class="text-center" style="color: blue">Ваши заказы</h4>
+    <table class="table table-bordered table-info">
+        <tr style="color:yellow; background: lightsalmon">
+            <td class ="text-center" ><strong>Номер заказа</strong></td>
+            <td class ="text-center"><strong>Дата заказа</strong></td>
+            <td class ="text-center"><strong>Статус заказа</strong></td>
+            <td class ="text-center"><strong>Стоимость заказа</strong></td>
+            <td class ="text-center"><strong>Детали заказа</strong></td>
+
+        </tr>
+        {% for item in order %}
+        <tr style="color:darkblue; background: lightgreen">
+            <td class ="text-center" style="padding-top: 20px; padding-bottom: 20px">{{ item.id }}</td>
+            <td class ="text-center" style="padding-top: 20px; padding-bottom: 20px">{{ item.date }}</td>
+            <td class ="text-center" style="padding-top: 20px; padding-bottom: 20px">{{ item.status }}</td>
+            <td class ="text-center" style="padding-top: 20px; padding-bottom: 20px">{{ item.total }} руб.</td>
+            <td class ="text-center" style="padding-top: 20px; padding-bottom: 20px">
+
+                <!-- Button trigger modal -->
+                 <button type="button" class="btn btn-primary btn-md" data-toggle="modal"
+                         data-target="#exampleModal-{{ item.id }}">
+                    Детали заказа
+                </button>
+
+
+                <!-- Modal -->
+                {% for item in order %}
+                    <div class="modal fade" id="exampleModal-{{ item.id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color:#F3C5F2; color:midnightblue">
+                                    <h5 class="modal-title" id="exampleModalLabel">
+                                    Заказ № {{ item.id }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" style="background-color:purple; color:darkorange">
+                                    <h3 >Товар</h3>
+                                    <table class="table" style="background-color:olivedrab; color:aquamarine;
+                                    border-color:lavender">
+                                       {% for order_item in item.items.items.all %}
+
+                                               <tr>
+                                                   <td>{{ order_item.service.title }}</td>
+                                                   <td>{{ order_item.phone }}</td>
+                                                   <td>{{ order_item.item_total }} руб.</td>
+                                                   <td>{{ order_item.service.brand }}</td>
+                                               </tr>
+                                        {% endfor %}
+
+                                           <tr>
+                                                   <td></td>
+                                                   <td>Итого:</td>
+                                                   <td><strong>{{ item.items.cart_total }} руб.</strong></td>
+                                           </tr>
+
+
+                                    </table>
+                                    <h3>Заказчик</h3>
+                                        <p>Имя: {{ item.first_name }}</p>
+                                        <p>Фамилия: {{ item.last_name }}</p>
+                                        <p>Телефон: {{ item.order_phone }}</p>
+                                    <h3>Способ приобретения услуги</h3>
+                                        <p>{% if item.buying_type == 'self' %}В офисе {% else %}Доставка{% endif %}</p>
+                                        <p>{% if item.buying_type == 'delivery' %}{{ item.address }}{% endif %}</p>
+                                </div>
+                                <div class="modal-footer" style="background-color:#D193D0">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Закрыть
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+
+
+
+{% endblock content%}

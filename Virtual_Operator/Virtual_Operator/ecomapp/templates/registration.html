@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+ <style>
+ form{
+   position:relative;
+   top:50%;
+   left:50%;
+   width:400px;
+   color: #2f6f9f;
+}
+  </style>
+
+
+    <h3 class="text-center" style="color: darkgoldenrod">Регистрация нового пользователя</h3>
+    <div class="col-sm-8 col-sm-offset-2"><b>
+    <br>
+
+    <form action="" method="POST" class="form-container">
+        {% csrf_token %}
+        {{ form|crispy}}
+        <input type="submit" class="btn btn-success btn-block" value="Зарегестрироваться">
+    </form>
+
+    <br>
+    </b>
+    </div>
+{% endblock content%}

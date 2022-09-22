@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 500px;
+    }
+
+    .card{
+        background-color: #A9F5BC !important;
+        border-color: #A9F5BC;
+        }
+    </style>
+
+    <h3 class='text-center' style="color:#06035C">{{ service.title }}</h3>
+    <table width="100%">
+        <tr>
+            <td align="center" valign="top">
+                <div class="col-sm-4" style="text-align: left">
+                <img src="{{ service.image.url }}" style="width: 150%; height:150%">
+                </div>
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+            <td align="middle" valign="top">
+                <div class="box" style="text-align:center; font-size: 25px; color: mediumvioletred ">
+                        <div class="card h-50">
+                            <div class="card-body">
+
+                                <div class="card-text" style="color: #BF00FF">{{ service.description }}</div>
+
+                            </div>
+                        </div>
+
+
+                    <p style='font-size: 30px; color:olive'>Цена: <a style="color: red"><strong>{{ service.price }} руб.</strong></a></p>
+                    <p style='font-size: 25px; color:darkgoldenrod'>Поставщик: <a style="color: darkblue"><strong>{{ service.brand }}.</strong></a></p>
+                {% if request.user.is_authenticated %}
+                    <a href='#' class="add_to_cart" data-slug="{{ service.slug }}"><button class='btn btn-danger'>
+                    Добавить в корзину</button></a>
+                {% else %}
+                <p class="text-center" style="color:#708090"> Заказывать услуги могут только авторизированные пользователи. Пожалуйста,
+                    <a href="{% url 'login' %}" style="color: #047E99"><strong>войдите</strong></a> или <a href="{% url 'registration' %}" style="color: #047E99"><strong>зарегестрируйтесь.</strong></a></p>
+                {% endif %}
+
+                </div>
+            </td>
+        </tr>
+
+    </table>
+
+    <div ><br></div>
+
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js'%}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add_to_cart').on('click', function(e) {
+                e.preventDefault();
+                service_slug = $(this).attr('data-slug');
+                data = {
+                   service_slug: service_slug
+                };
+
+                $.ajax({
+                    type:"GET",
+                    url:'{% url "add_to_cart" %}',
+                    data: data,
+                    success: function (data) {
+                           $("#cart_count").html(data.cart_total)
+                    }
+                })
+            })
+        })
+
+    </script>
+{% endblock content %}

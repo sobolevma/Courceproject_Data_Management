@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+ <style>
+ form{
+   position:relative;
+   top:50%;
+   left:56%;
+   width:300px;
+   color: #2f6f9f;
+  }
+  </style>
+
+    <h3 class="text-center" style="color: darkgoldenrod">Авторизация</h3>
+    <br>
+    <div class="col-sm-8 col-sm-offset-2"><b>
+
+     <form action="" method="POST" class="form-container">
+        {% csrf_token %}
+        {{ form|crispy}}
+        <input type="submit" class="btn btn-success btn-block" value="Войти в систему">
+         <br>
+    </form>
+    </b></div>
+{% endblock content%}

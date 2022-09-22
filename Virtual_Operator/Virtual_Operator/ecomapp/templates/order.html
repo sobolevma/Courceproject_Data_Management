@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+
+    <form action="{% url 'make_order' %}" method="POST"> {% csrf_token %}
+    <div class="row" style="color: darkorange">
+        <div class="col-sm-4"><strong>
+            {{ form.name|as_crispy_field }}</strong>
+        </div>
+    <div class="col-sm-4"><strong>
+        {{ form.last_name|as_crispy_field }}</strong>
+        </div>
+    <div class="col-sm-4"><strong>
+        {{ form.third_name|as_crispy_field }}</strong>
+        </div>
+    <div class="col-sm-4"><strong>
+        {{ form.order_phone|as_crispy_field }}</strong>
+        </div>
+
+    </div>
+        <div style="color: darkorange">
+        <strong>{{ form.buying_type|as_crispy_field }}</strong>
+         <strong>{{ form.address|as_crispy_field }}</strong>
+        <strong>{{ form.date|as_crispy_field }}</strong>
+        </div>
+    <div style="text-align:right"><input type="submit" class ="btn btn-success" value="Оформить заказ"></div>
+    </form>
+
+<br>
+
+<script src="{% static 'admin/js/vendor/jquery/jquery.js'%}"></script>
+    <script>
+
+    $(document).ready(function () {
+            $('#div_id_address').css('display','none');
+            $('#id_buying_type').on('change',function () {
+                buying_type = $(this).val();
+
+                if(buying_type === 'delivery')
+                  $('#div_id_address').css('display','block');
+                else
+                    $('#div_id_address').css('display','none');
+            });
+
+            $('#id_date_day').css('width','70px');
+            $('#id_date_day').css('display','inline');
+            $('#id_date_month').css('width','120px');
+            $('#id_date_month').css('display','inline');
+            $('#id_date_year').css('width','100px');
+            $('#id_date_year').css('display','inline');
+
+    })
+    </script>
+
+{% endblock content%}
